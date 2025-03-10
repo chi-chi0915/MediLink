@@ -1,8 +1,20 @@
+<template>
+  <div id="map" ref="mapRef" class="map-container"></div>
+</template>
 
-<script>
-export default {
-  mounted() {
-    // 네이버 지도 API 로드
+<script setup>
+import { ref, onMounted } from "vue";
+
+const mapRef = ref(null);
+
+// 네이버 지도 API 로드 함수
+const loadNaverMap = () => {
+  return new Promise((resolve) => {
+    if (window.naver) {
+      resolve(window.naver);
+      return;
+    }
+
     const script = document.createElement("script");
     script.src =
       "https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=lamhj6mox4";
@@ -10,30 +22,29 @@ export default {
     script.defer = true;
     document.head.appendChild(script);
 
-    script.onload = () => {
-      // 네이버 지도 생성
-      // 네이버 지도 생성 좌표 LatLng(37.5670135, 126.9783740)
-      new window.naver.maps.Map("map", {
-        center: new window.naver.maps.LatLng(37.5670135, 126.9783740),
-       
-        // 스크롤바 생성
-        scaleControl: false,
-        logoControl: false,
-        mapDataControl: false,
-        zoomControl: true,
-        minzoom: 15
-
-        //zoom: 15
-      });
-    };
-  }
+    script.onload = () => resolve(window.naver);
+  });
 };
-</script>
 
-<template>
-  <div id="map">
-  </div>
-</template>
+onMounted(async () => {
+  const naver = await loadNaverMap(); // 네이버 지도 API 로드 완료 후 실행
+
+  const map = new naver.maps.Map(mapRef.value, {
+    center: new naver.maps.LatLng(37.5670135, 126.9783740),
+    zoom: 15,
+    scaleControl: false,
+    logoControl: false,
+    mapDataControl: false,
+    zoomControl: true,
+    minZoom: 5
+  });
+
+  new naver.maps.Marker({
+    position: new naver.maps.LatLng(37.3595704, 127.105399),
+    map: map
+  });
+});
+</script>
 
 <style scoped>
 #map {
