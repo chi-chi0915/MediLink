@@ -11,6 +11,7 @@ export default {
     document.head.appendChild(script);
 
     script.onload = () => {
+      // 네이버 지도 생성
       // 네이버 지도 생성 좌표 LatLng(37.5670135, 126.9783740)
       new window.naver.maps.Map("map", {
         center: new window.naver.maps.LatLng(37.5670135, 126.9783740),
